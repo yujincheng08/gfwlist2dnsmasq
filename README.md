@@ -13,8 +13,10 @@ Valid options are:
                 DNS IP address for the GfwList Domains (Default: 127.0.0.1)
     -p, --port <dns_port>
                 DNS Port for the GfwList Domains (Default: 5353)
-    -s, --ipset <ipset_name>
-                Ipset name for the GfwList domains
+    -g, --group <group_name>
+                DNS Group name for the GfwList Domains (For SmartDNS)
+    -s, --ipset <ipset_names>
+                Ipset names for the GfwList domains (Seperated by commas)
                 (If not given, ipset rules will not be generated.)
     -o, --output <FILE>
                 /path/to/output_filename
@@ -23,6 +25,9 @@ Valid options are:
     -l, --domain-list
                 Convert Gfwlist into domain list instead of dnsmasq rules
                 (If this option is set, DNS IP/Port & ipset are not needed)
+        --smart-dns
+                Covert Gfwlist into SmartDNS files instead of dnsmasq rules
+                (If this option is set, DNS IP/Port are not needed)
         --exclude-domain-file <FILE>
                 Delete specific domains in the result from a domain list text file
                 Please put one domain per line
@@ -30,7 +35,8 @@ Valid options are:
                 Include extra domains to the result from a domain list text file
                 This file will be processed after the exclude-domain-file
                 Please put one domain per line
-    -h, --help  Usage
+    -h, --help
+                Usage
 ```
 
 ### OpenWRT Usage

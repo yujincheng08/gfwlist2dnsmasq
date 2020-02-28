@@ -15,8 +15,8 @@ Valid options are:
                 DNS Port for the GfwList Domains (Default: 5353)
     -g, --group <group_name>
                 DNS Group name for the GfwList Domains (For SmartDNS)
-    -s, --ipset <ipset_names>
-                Ipset names for the GfwList domains (Seperated by commas)
+    -s, --ipset <ipset_name>
+                Ipset name for the GfwList domains
                 (If not given, ipset rules will not be generated.)
     -o, --output <FILE>
                 /path/to/output_filename

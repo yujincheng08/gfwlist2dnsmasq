@@ -43,8 +43,8 @@ Valid options are:
                 DNS Port for the GfwList Domains (Default: 5353)
     -g, --group <group_name>
                 DNS Group name for the GfwList Domains (For SmartDNS)
-    -s, --ipset <ipset_names>
-                Ipset names for the GfwList domains (Seperated by commas)
+    -s, --ipset <ipset_name>
+                Ipset name for the GfwList domains
                 (If not given, ipset rules will not be generated.)
     -o, --output <FILE>
                 /path/to/output_filename
@@ -207,7 +207,7 @@ get_args(){
         if [ -z $IPSET_NAME ]; then
             WITH_IPSET=0
         else
-            IPSET_TEST=$(echo $IPSET_NAME | grep -E '^(\w+|,)+$')
+            IPSET_TEST=$(echo $IPSET_NAME | grep -E '^\w+$')
             if [ "$IPSET_TEST" != "$IPSET_NAME" ]; then
                 _red 'Error: Please enter a valid IP set name.\n'
                 exit 1
@@ -222,11 +222,12 @@ get_args(){
         if [ -z $IPSET_NAME ]; then
             WITH_IPSET=0
         else
-            IPSET_TEST=$(echo $IPSET_NAME | grep -E '^(\w+|,)+$')
+            IPSET_TEST=$(echo $IPSET_NAME | grep -E '^(\w+|#(4|6):\w+(,#(4|6):\w+)?)$')
             if [ "$IPSET_TEST" != "$IPSET_NAME" ]; then
                 _red 'Error: Please enter a valid IP set name.\n'
                 exit 1
             else
+                IPSET_NAME=$(echo $IPSET_NAME | $SED_ERES 's/#/\\#/g')
                 WITH_IPSET=1
             fi
         fi
@@ -330,12 +331,9 @@ process(){
         LINE=1
         if [ $WITH_IPSET -eq 1 ]; then
             _green 'Ipset rules included.'
-            for NAME in $(echo "$IPSET_NAME" | tr ',' ' ')
-            do
-                if [ $LINE -eq 1 ]; then SED_STR=$SED_STR'\n'; fi
-                SED_STR=$SED_STR'ipset=/\1/'$NAME
-                LINE=1
-            done
+            if [ $LINE -eq 1 ]; then SED_STR=$SED_STR'\n'; fi
+            SED_STR=$SED_STR'ipset=/\1/'$IPSET_NAME
+            LINE=1
         else
             _green 'Ipset rules not included.'
             # sort -u $DOMAIN_FILE | $SED_ERES 's#(.+)#server=/\1/'$DNS_IP'\#'$DNS_PORT'#g' > $CONF_TMP_FILE
@@ -363,12 +361,9 @@ process(){
         fi
         if [ $WITH_IPSET -eq 1 ]; then
             _green 'Ipset rules included.'
-            for NAME in $(echo "$IPSET_NAME" | tr ',' ' ')
-            do
-                if [ $LINE -eq 1 ]; then SED_STR=$SED_STR'\n'; fi
-                SED_STR=$SED_STR'ipset /\1/'$NAME
-                LINE=1
-            done
+            if [ $LINE -eq 1 ]; then SED_STR=$SED_STR'\n'; fi
+            SED_STR=$SED_STR'ipset /\1/'$IPSET_NAME
+            LINE=1
         else
             _green 'Ipset rules not included.'
             # sort -u $DOMAIN_FILE | $SED_ERES 's#(.+)#server=/\1/'$DNS_IP'\#'$DNS_PORT'#g' > $CONF_TMP_FILE

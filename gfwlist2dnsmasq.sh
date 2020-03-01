@@ -350,20 +350,16 @@ process(){
 
     elif [ $OUT_TYPE = 'SMARTDNS_RULES' ]; then
         # Convert domains into smart rules
-        SED_STR='s#(.+)#'
-        LINE=0
+        SED_STR='s#(.+)#domain-rules /\1/ '
         if [ $WITH_GROUP -eq 1 ]; then
             _green 'Group included.'
-            SED_STR=$SED_STR'nameserver /\1/'$GROUP
-            LINE=1
+            SED_STR=$SED_STR'-nameserver '$GROUP' '
         else
             _green 'Group not included.'
         fi
         if [ $WITH_IPSET -eq 1 ]; then
             _green 'Ipset rules included.'
-            if [ $LINE -eq 1 ]; then SED_STR=$SED_STR'\n'; fi
-            SED_STR=$SED_STR'ipset /\1/'$IPSET_NAME
-            LINE=1
+            SED_STR=$SED_STR'-ipset '$IPSET_NAME' '
         else
             _green 'Ipset rules not included.'
             # sort -u $DOMAIN_FILE | $SED_ERES 's#(.+)#server=/\1/'$DNS_IP'\#'$DNS_PORT'#g' > $CONF_TMP_FILE
